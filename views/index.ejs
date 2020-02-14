@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        form {
+            background: #fff;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border: 1px solid #000;
+        }
+
+        form input {
+            border: 1 solid rgb(255, 255, 255);
+            padding: 10px;
+            width: 85%;
+            margin-right: .5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgba(12, 172, 12, 0.699);
+            border: none;
+            padding: 10px;
+            margin-left: 2%;
+        }
+
+        #messages { list-style: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
+
+
+
+    </style>
+    
+</head>
+<body>
+
+
+    <ul id="messages"></ul>
+
+    <form action="/" method="post" id="chatForm">
+        <input type="text" id="txt" autocomplete="off" autofocus="on" placeholder="Type your message here...">
+        <button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <script>
+
+        var socket = io.connect('http://localhost:8080');
+
+        $('form').submit(function(e) {
+            e.preventDefault();
+            socket.emit('chat_message', $('#txt').val())
+            $('#txt').val('');
+            return false;
+        });
+
+        socket.on('chat_message', function(msg) {
+            $('#messages').append($('<li>').html(msg));
+        });
+
+        socket.on('is_online', function(username) {
+            $('#messages').append($('<li>').html(username));
+        });
+
+        var username = prompt('Please tel me your name');
+        socket.emit('username', username);
+
+
+    </script>
+
+
+</body>
+</html>
